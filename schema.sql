@@ -21,4 +21,5 @@ CREATE TABLE departments (
 );
 
 SELECT * FROM products;
+
 SELECT * FROM departments;
