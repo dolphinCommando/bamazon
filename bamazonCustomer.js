@@ -58,9 +58,7 @@ function getProductUnits(arr, index_id) {
 		  if (arr[+index_id - 1].stock_quantity < +response.units) {
 			  console.log('Sorry, insufficient quantity.');
 			  console.log('Returning to main page.');
-			  setTimeout(() => {
-				  displayProducts();
-			  }, 1500);
+			  returnToMain();
 		  }
 		  else {
 			  placeOrder(arr, index_id, response.units);
@@ -75,10 +73,15 @@ function placeOrder(arr, id, quantity) {
 	connection.query('UPDATE products SET stock_quantity = ?, product_sales = ? WHERE item_id = ?', [stockNow, someMath, id], (err, results) => {
 		if (err) throw err;
 		console.log(`Your bank account has been billed $${someMath}.\nThank you for ordering through BAMAZON.`);
-		  connection.end(function(err){});
+		returnToMain();
 	});
 }
 
+function returnToMain() {
+  setTimeout(() => {
+    displayProducts();
+  }, 1500);
+}
 displayProducts();
 
 
