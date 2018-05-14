@@ -32,3 +32,47 @@ function supervisorMenu() {
   });
 }
 
+function viewProductSales() {
+  const queryWithSales = `
+    SELECT departments.*, SUM(products.product_sales) AS sales
+    FROM departments
+    LEFT JOIN products ON departments.department_name = products.department_name
+    GROUP BY departments.department_id, departments.department_name, departments.over_head_costs, products.department_name;
+    `;
+  connection.query(queryWithSales, (err, res) => {
+    if (err) throw err;
+    res.forEach(row => {
+      console.log(`${row.department_id} ${row.department_name} ${row.over_head_costs} ${row.sales} ${parseFloat(row.sales)-parseFloat(row.over_head_costs)}`);
+    });
+  });
+}
+
+function createDepartment() {
+  inquirer.prompt([
+    {
+      name: 'name',
+      message: 'Enter department name: ',
+      type: 'input'
+    },
+    {
+      name: 'costs',
+      message: 'Enter over-head costs: ',
+      type: 'input'
+    }
+  ]).then(response => {
+    if (parseFloat(response.costs) !== NaN) {
+      connection.query(`INSERT INTO departments (department_name, over_head_costs) VALUES (?, ?)`,
+      [response.name, response.costs], (err, res) => {
+        if (err) throw err;
+        console.log(`${response.name} department added to Bamazon.`);
+      });
+    }
+    else {
+      console.log('Please enter a floating-point number for costs.');
+      createDepartment();
+    }
+  });
+}
+
+supervisorMenu();
+
