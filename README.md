@@ -7,7 +7,7 @@ NodeJs and MySQL. NPM packages included are mysql, inquirer, and console.table.
 When cloning the repo, add a local _keys.js_ file with your own MySQL credentials. 
 
 ### Usage
-Plug one the these commands into terminal:
+Plug one the these commands into terminal:  
  _node bamazonCustomer.js_  
  _node bamazonManager.js_  
  _node bamazonSupervisor.js_  
