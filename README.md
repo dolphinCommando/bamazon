@@ -8,9 +8,9 @@ When cloning the repo, add a local _keys.js_ file with your own MySQL credential
 
 ### Usage
 Plug one the these commands into terminal:
- _node bamazonCustomer.js_
- _node bamazonManager.js_
- _node bamazonSupervisor.js_
+ _node bamazonCustomer.js_  
+ _node bamazonManager.js_  
+ _node bamazonSupervisor.js_  
 Follow the prompts. Finishing the prompt will return you to the main menu. 
 
 ### Customer-side
