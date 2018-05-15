@@ -1,13 +1,14 @@
-require('dotenv').config();
+const keys = require('./keys.js');
 var mysql = require('mysql');
 var inquirer = require('inquirer');
+const cTable = require('console.table');
 
 var connection = mysql.createConnection({
-host: 'localhost',
-port: 3306,
-user: 'root',
-password: 'password',
-database: 'bamazon'
+host: keys.mysql.host,
+port: keys.mysql.port,
+user: keys.mysql.user,
+password: keys.mysql.password,
+database: keys.mysql.database
 });
 
 var supervisorOptions = ['View Product Sales by Department', 'Create New Department'];
@@ -41,9 +42,18 @@ function viewProductSales() {
     `;
   connection.query(queryWithSales, (err, res) => {
     if (err) throw err;
-    res.forEach(row => {
-      console.log(`${row.department_id} ${row.department_name} ${row.over_head_costs} ${row.sales} ${parseFloat(row.sales)-parseFloat(row.over_head_costs)}`);
+    var table = [];
+    res.forEach(dep => {
+      table.push({
+        department_id: dep.department_id,
+        department_name: dep.department_name,
+        over_head_costs: dep.over_head_costs,
+        product_sales: dep.sales || 0.00,
+        total_profit: (parseFloat(dep.sales) - parseFloat(dep.over_head_costs)) || 0.00
+      });
     });
+    console.table(cTable.getTable(table));
+    returnToMain();
   });
 }
 
@@ -60,11 +70,12 @@ function createDepartment() {
       type: 'input'
     }
   ]).then(response => {
-    if (parseFloat(response.costs) !== NaN) {
+    if (!Number.isNaN(parseFloat(response.costs))) {
       connection.query(`INSERT INTO departments (department_name, over_head_costs) VALUES (?, ?)`,
       [response.name, response.costs], (err, res) => {
         if (err) throw err;
         console.log(`${response.name} department added to Bamazon.`);
+        returnToMain();
       });
     }
     else {
@@ -73,6 +84,13 @@ function createDepartment() {
     }
   });
 }
+
+function returnToMain() {
+  setTimeout(() => {
+    supervisorMenu();
+  }, 2000);
+}
+
 
 supervisorMenu();
 

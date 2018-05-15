@@ -1,27 +1,34 @@
-require('dotenv').config();
+const keys = require('./keys.js');
 var mysql = require('mysql');
 var inquirer = require('inquirer');
+const cTable = require('console.table');
 
 
 var connection = mysql.createConnection({
-host: 'localhost',
-port: 3306,
-user: 'root',
-password: 'password',
-database: 'bamazon'
+host: keys.mysql.host,
+port: keys.mysql.port,
+user: keys.mysql.user,
+password: keys.mysql.password,
+database: keys.mysql.database
 });
 
 function displayProducts() {
   connection.query('SELECT * FROM products', (err, results) => {
     if (err) throw err;
-	console.log('---------------------');
+	  console.log('---------------------');
     console.log(' WELCOME TO BAMAZON!');
-	console.log('---------------------');
+	  console.log('---------------------');
+    var table = [];
     results.forEach(product => {
-      console.log(`| ID: ${product.item_id} | Name: ${product.product_name} | Price: ${product.price} |`);
-	});
-  
-	getProductID(results);
+      table.push({
+        id: product.item_id,
+        name: product.product_name,
+				price: '$' + product.price
+      });
+    });
+    console.table(cTable.getTable(table));
+    
+	  getProductID(results);
   });
 }
 
@@ -33,7 +40,7 @@ function getProductID(arr) {
 			type: 'input'
 		}
 	]).then(response => {
-		if (+response.id > 0 && +response.id <= arr.length && parseInt(response.id) !== NaN) {
+		if (+response.id > 0 && +response.id <= arr.length && Number.isInteger(+response.id)) {
 			getProductUnits(arr, response.id);
 		}
 		else {
@@ -52,7 +59,7 @@ function getProductUnits(arr, index_id) {
 		}
 	]).then(response => {
       if (!Number.isInteger(+response.units)) {
-		  getProductUnits(arr);
+		  getProductUnits(arr, index_id);
 	  }
 	  else {
 		  if (arr[+index_id - 1].stock_quantity < +response.units) {
@@ -80,7 +87,7 @@ function placeOrder(arr, id, quantity) {
 function returnToMain() {
   setTimeout(() => {
     displayProducts();
-  }, 1500);
+  }, 2000);
 }
 displayProducts();
 
