@@ -2,6 +2,8 @@
 
 **bamazon** is a command-line Amazon.com emulator. BAM-azon!
 
+[Video tutorial on Google Drive](https://drive.google.com/file/d/1aCQyzGm_ZLc5c8m9SXfp6RwyOtBmKyDC/view)
+
 ### Languages
 NodeJs and MySQL. NPM packages included are mysql, inquirer, and console.table.
 When cloning the repo, add a local _keys.js_ file with your own MySQL credentials. 
